@@ -17,7 +17,6 @@ RUN a2enmod rewrite
 # Copy this folder to the project file
 ADD . /var/www/html/
 
-RUN cd /var/www/html/
 RUN /var/www/html/deploy.sh
 
 # Save apache configuration file with mod_rewrite
