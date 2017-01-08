@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 MAINTAINER Alex <alex@nikitin.ninja>
 
-ARG protocol = https
+ARG protocol="https"
 
 RUN apt-get update && \
 	apt-get -y upgrade && \
