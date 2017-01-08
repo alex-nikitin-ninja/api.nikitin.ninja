@@ -1,0 +1,23 @@
+php_flag display_startup_errors on
+php_flag display_errors on
+php_flag html_errors on
+php_flag log_errors on
+
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+	
+	# Force https - comment these 2 lines if you don't have https enabled
+	RewriteCond %{HTTPS} off
+	RewriteRule (.*) https://%{SERVER_NAME}/$1 [L,R=301,NC]
+	
+	# Processing .ini files (these are conf files - restrict access)
+	RewriteRule ^(.*?)\.ini(.*?)$ https://%{SERVER_NAME}/ [L,R=301,NC]
+
+	# Processing .php files
+	RewriteRule ^(.*?)\.php(.*?)$ index.php?a%{ENV:UNIQUE_ID}=$1.php$2 [QSA,NC,L]
+
+	# Processing other requests
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule "^(.*)$" index.php?a%{ENV:UNIQUE_ID}=$1 [QSA,L]
+</IfModule>
