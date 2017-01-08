@@ -1,6 +1,8 @@
 FROM ubuntu:latest
 MAINTAINER Alex <alex@nikitin.ninja>
 
+ARG protocol = https
+
 RUN apt-get update && \
 	apt-get -y upgrade && \
 	apt-get -y install \ 
@@ -17,7 +19,7 @@ RUN a2enmod rewrite
 # Copy this folder to the project file
 ADD . /var/www/html/
 
-RUN /var/www/html/deploy.sh
+RUN cd /var/www/html/ && /var/www/html/deploy.sh ${protocol}
 
 # Save apache configuration file with mod_rewrite
 RUN cp /var/www/html/apache/000-default.conf /etc/apache2/sites-available/000-default.conf

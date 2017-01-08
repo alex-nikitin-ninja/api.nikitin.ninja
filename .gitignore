@@ -1,3 +1,4 @@
+/.htaccess
 /tmp/
 /vendor/*
 /composer.lock
