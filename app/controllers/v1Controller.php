@@ -5,7 +5,7 @@ Class v1Controller extends Controller{
 		$r = array(
 			'version' => '1.0',
 			'description' => 'Version 1.0',
-			'intro' => 'Welcome to nikitin.ninja api back-end service (powered by Alex Nikitin https://alex.nikitin.ninja/)',
+			'intro' => 'Welcome to nikitin.ninja api back-end service (developed by Alex Nikitin https://alex.nikitin.ninja/)',
 			'message' => 'It\'s fully OOP and docker friendly',
 			'git_clone_ssh' => 'git@github.com:alex-nikitin-ninja/api.nikitin.ninja.git',
 			'git_repo' => 'https://github.com/alex-nikitin-ninja/api.nikitin.ninja',
