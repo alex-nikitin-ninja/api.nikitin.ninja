@@ -26,10 +26,11 @@ Class scrapeCarsHelper extends Helper{
 	// );
 
 	public function storeData($getParams, $postParams){
-		// $alertsModel = new messagesModel();
+		$scrapeCarsModel = new scrapeCarsModel();
 		$r = array(
 			$getParams,
 			$postParams,
+			$scrapeCarsModel->now(),
 		);
 		return $r;
 	}
