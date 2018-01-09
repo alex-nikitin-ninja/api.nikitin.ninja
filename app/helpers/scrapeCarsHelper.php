@@ -1,36 +1,43 @@
 <?php
 Class scrapeCarsHelper extends Helper{
-
-	// CREATE TABLE nikitin_ninja.tbl_scraped_cars (
-	//     id BIGINT AUTO_INCREMENT,
-	//     ad_caption VARCHAR(256),
-	//     ad_direct_url VARCHAR(512),
-	//     ad_time_mysql DATETIME,
-	//     ad_time_raw VARCHAR(64),
-	//     ad_time_parsed DATETIME,
-	//     car_price_parsed DECIMAL(10, 2),
-	//     car_price_raw VARCHAR(63),
-	//     car_year VARCHAR(16),
-	//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	//     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	//     deleted_at DATETIME,
-	//     PRIMARY KEY (id)
-	// );
-
-	// CREATE TABLE nikitin_ninja.tbl_scraped_cars_images (
-	//     id BIGINT AUTO_INCREMENT,
-	//     car_id BIGINT,
-	//     big VARCHAR(512),
-	//     sm VARCHAR(512),
-	//     PRIMARY KEY (id)
-	// );
-
+	// /home/ubuntu/shell/docker/run-scheduled-tasks.sh
+	// curl -s -H "Content-Type: application/json" -X POST -d @results-scraping.json https://api.nikitin.ninja/v1/scrapeCars/storeData
 	public function storeData($getParams, $postParams){
 		$scrapeCarsModel = new scrapeCarsModel();
+		$listOfAds = $postParams;
+
+		$newCars = 0;
+		foreach ($listOfAds as $oneCar) {
+			$carInfo = $scrapeCarsModel->getCarByUrl($oneCar['adDirectUrl'], ['ad_direct_url']);
+			if(count($carInfo) === 0) {
+				$row = [
+					"ad_caption"       => $oneCar['adCaption'],
+					"ad_direct_url"    => $oneCar['adDirectUrl'],
+					"ad_time_mysql"    => $oneCar['adTime']['mysql'],
+					"ad_time_raw"      => $oneCar['adTime']['raw'],
+					"ad_time_parsed"   => $oneCar['adTime']['mysql'],
+					"car_price_parsed" => $oneCar['carPrice']['parsed'],
+					"car_price_raw"    => $oneCar['carPrice']['raw'],
+					"car_year"         => $oneCar['carYear'],
+					"raw_data"         => json_encode($oneCar),
+				];
+				$carId = $scrapeCarsModel->makeInsert('nikitin_ninja.tbl_scraped_cars', $row);
+
+				foreach ($oneCar['carImages'] as $oneImage) {
+					$imgRow = [
+						"car_id" => $carId,
+						"big"    => $oneImage['big'],
+						"sm"     => $oneImage['sm'],
+					];
+					$scrapeCarsModel->makeInsert('nikitin_ninja.tbl_scraped_cars_images', $imgRow);
+				}
+				$newCars++;
+			}
+		}
+
 		$r = array(
-			$getParams,
-			$postParams,
-			$scrapeCarsModel->now(),
+			"recvCars" => count($listOfAds),
+			"newCars"  => $newCars,
 		);
 		return $r;
 	}
